@@ -1,10 +1,11 @@
 # MailMaster 📧
 
-A unified tool for high-performance email database management and bulk delivery. This project wraps advanced validation and mailing engines into a simple Excel-compatible interface.
+A unified tool for high-performance email database management and bulk delivery. This project wraps advanced validation, spam scanning, and mailing engines into a simple interface.
 
 ## 🚀 Features
 - **Excel Processing:** Automatically extract emails from `.xlsx` files and output cleaned versions.
 - **Smart Validation:** Removes dangerous trap emails, administrative addresses, and security-firm hosted accounts.
+- **Spam Scanning:** Analyze your email templates for spam scores using AI-powered detection (phishing, toxicity, and Bayesian filters).
 - **Bulk Delivery:** Multithreaded SMTP mailer with advanced obfuscation to bypass spam filters.
 - **SMTP Verification:** Validates your SMTP credentials before you start a campaign.
 
@@ -23,21 +24,26 @@ Use the master entry point `mailmaster.py`:
 python mailmaster.py validate "your_database.xlsx"
 ```
 
-**2. Check SMTPs:**
+**2. Scan your Email Template for Spam Score:**
+*The engine will automatically download on its first run.*
+```bash
+python mailmaster.py scan "template.html"
+```
+
+**3. Check SMTPs:**
 ```bash
 python mailmaster.py check-smtp "smtps.txt"
 ```
 
-**3. Run Campaign:**
+**4. Run Campaign:**
 ```bash
 python mailmaster.py send
 ```
 
 ## ⚖️ Credits
-This tool utilizes powerful core modules developed by **[aels](https://github.com/aels)**.
-- **Validation Engine:** Based on [Validol](https://github.com/aels/mailtools/tree/main/remove-dangerous-emails).
-- **Mailing Engine:** Based on [MadCat Mailer](https://github.com/aels/mailtools/tree/main/mass-mailer).
-- **SMTP Checker:** Based on [SMTP Checker](https://github.com/aels/mailtools/tree/main/smtp-checker).
+This tool utilizes powerful core modules developed by:
+- **[aels](https://github.com/aels)**: Validation Engine, Mailing Engine, and SMTP Checker.
+- **[Forward Email (SpamScanner)](https://github.com/spamscanner/spamscanner)**: AI-powered Spam Scanning engine.
 
 ## ⚠️ Legal Notice
 For educational purposes only. Do not use for illegal activities or spamming without consent.
