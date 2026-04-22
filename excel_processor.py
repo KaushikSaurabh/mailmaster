@@ -21,7 +21,27 @@ def find_email_column(df):
 
 def run_pro_validation(excel_path):
     print(f"[*] Reading: {excel_path}")
-    df = pd.read_excel(excel_path)
+
+    # Load all sheets into a dictionary of DataFrames
+    excel_file = pd.ExcelFile(excel_path)
+    all_sheets = []
+
+    print(f"[*] Found {len(excel_file.sheet_names)} sheets: {', '.join(excel_file.sheet_names)}")
+
+    for sheet_name in excel_file.sheet_names:
+        sheet_df = pd.read_excel(excel_path, sheet_name=sheet_name)
+        if not sheet_df.empty:
+            # Add a column to track which sheet the data came from
+            sheet_df['Sheet_Source'] = sheet_name
+            all_sheets.append(sheet_df)
+
+    if not all_sheets:
+        print("[!] Error: No data found in any sheet.")
+        return
+
+    # Combine all sheets into one DataFrame
+    df = pd.concat(all_sheets, ignore_index=True, sort=False)
+
     email_col = find_email_column(df)
     if not email_col:
         print("[!] Error: Could not find an Email column.")
