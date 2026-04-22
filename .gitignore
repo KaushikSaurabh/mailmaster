@@ -1,0 +1,16 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Project files
+*.xlsx
+*.xls
+*.txt
+*.config
+*.bin
+core/ip2location.bin
