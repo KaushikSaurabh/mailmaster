@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MailMaster - Bulk Mail Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --sidebar-bg: #161b22;
+            --card-bg: #21262d;
+            --text-color: #c9d1d9;
+            --accent-color: #238636;
+            --border-color: #30363d;
+            --danger-color: #f85149;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+        }
+
+        .sidebar h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #fff;
+        }
+
+        .nav-link {
+            padding: 15px 25px;
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--card-bg);
+            border-left: 4px solid var(--accent-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #fff;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background-color: var(--sidebar-bg);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Forms */
+        .btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .file-input {
+            margin: 20px 0;
+            padding: 40px;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            background-color: var(--bg-color);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background-color: var(--bg-color);
+            border-radius: 5px;
+            margin-top: 20px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background-color: var(--accent-color);
+            transition: width 0.3s;
+        }
+
+        #log-window {
+            height: 200px;
+            background: #000;
+            color: #0f0;
+            padding: 15px;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-y: auto;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h1>MailMaster 📧</h1>
+    <a class="nav-link active" onclick="showSection('dashboard')">🏠 Dashboard</a>
+    <a class="nav-link" onclick="showSection('validator')">🛡️ Validator</a>
+    <a class="nav-link" onclick="showSection('scanner')">🔍 Spam Scan</a>
+    <a class="nav-link" onclick="showSection('smtp')">⚙️ SMTP Setup</a>
+    <a class="nav-link" onclick="showSection('campaign')">🚀 Campaign</a>
+</div>
+
+<div class="main-content">
+    
+    <!-- Dashboard Section -->
+    <div id="dashboard" class="section">
+        <div class="card">
+            <h2>Welcome Back!</h2>
+            <p>Ready to reach your subscribers? Let's get started.</p>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-value">1.2M+</span>
+                <span class="stat-label">Valid Emails Processed</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">99.8%</span>
+                <span class="stat-label">Delivery Accuracy</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">Ready</span>
+                <span class="stat-label">Mailing Status</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Validator Section -->
+    <div id="validator" class="section hidden">
+        <div class="card">
+            <h2>Excel List Validator</h2>
+            <p>Upload your Excel database (.xlsx) to split it into Safe and Dangerous lists.</p>
+            <form id="validate-form">
+                <div class="file-input">
+                    <input type="file" id="excel-file" accept=".xlsx">
+                    <p>Drop your file here or click to browse</p>
+                </div>
+                <button type="submit" class="btn">🚀 Start Validation</button>
+            </form>
+            <div class="progress-bar" id="validate-progress-container">
+                <div class="progress-fill" id="validate-progress"></div>
+            </div>
+            <div id="log-window">System ready...</div>
+        </div>
+    </div>
+
+    <!-- Scanner Section -->
+    <div id="scanner" class="section hidden">
+        <div class="card">
+            <h2>Spam Score Scanner</h2>
+            <p>Analyze your email template before sending.</p>
+            <textarea id="email-content" style="width:100%; height:200px; background:var(--bg-color); color:var(--text-color); border:1px solid var(--border-color); padding:10px; border-radius:8px;" placeholder="Paste your HTML or Text here..."></textarea>
+            <button class="btn" style="margin-top:20px;">🔍 Run AI Scan</button>
+        </div>
+    </div>
+
+    <!-- Additional sections will be built out by the app -->
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+<script>
+    const socket = io();
+
+    function showSection(id) {
+        document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        document.getElementById(id).classList.remove('hidden');
+        event.currentTarget.classList.add('active');
+    }
+
+    document.getElementById('validate-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const file = document.getElementById('excel-file').files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        document.getElementById('validate-progress-container').style.display = 'block';
+        const log = document.getElementById('log-window');
+        log.innerHTML = "Uploading file and starting validation...";
+
+        const response = await fetch('/api/validate', {
+            method: 'POST',
+            body: formData
+        });
+    });
+
+    socket.on('log_message', (data) => {
+        const log = document.getElementById('log-window');
+        const div = document.createElement('div');
+        div.textContent = data.msg;
+        log.appendChild(div);
+        log.scrollTop = log.scrollHeight;
+    });
+
+    socket.on('progress', (data) => {
+        document.getElementById('validate-progress').style.width = data.percent + '%';
+    });
+</script>
+
+</body>
+</html>

@@ -51,6 +51,9 @@ def main():
     scan_parser = subparsers.add_parser("scan", help="Scan an email template for spam score")
     scan_parser.add_argument("file", help="Path to your email template (.html or .txt)")
 
+    # Command: Launch GUI
+    gui_parser = subparsers.add_parser("gui", help="Launch the web-based dashboard")
+
     args = parser.parse_args()
 
     if args.command == "validate":
@@ -73,6 +76,9 @@ def main():
             os.system(f"{scanner_bin} scan {args.file}")
         else:
             print("[!] Error: Could not download/run SpamScanner.")
+    elif args.command == "gui":
+        print("[*] Launching MailMaster Web Dashboard...")
+        os.system("python app.py")
     else:
         parser.print_help()
 
