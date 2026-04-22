@@ -3,6 +3,30 @@ import os
 import argparse
 from excel_processor import run_pro_validation
 
+def update_config(smtps_file, leads_file):
+    config_path = "dummy.config"
+    if not os.path.exists(config_path):
+        print("[!] dummy.config not found. Run 'python mailmaster.py send' once to generate it.")
+        return
+
+    with open(config_path, 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+
+    new_lines = []
+    for line in lines:
+        if line.startswith("smtps_list_file:"):
+            new_lines.append(f"smtps_list_file: {os.path.abspath(smtps_file)}\n")
+        elif line.startswith("mails_list_file:"):
+            new_lines.append(f"mails_list_file: {os.path.abspath(leads_file)}\n")
+        else:
+            new_lines.append(line)
+
+    with open(config_path, 'w', encoding='utf-8') as f:
+        f.writelines(new_lines)
+    print(f"[+] Updated dummy.config with:")
+    print(f"    - SMTPs: {smtps_file}")
+    print(f"    - Leads: {leads_file}")
+
 def main():
     parser = argparse.ArgumentParser(description="MailMaster - Unified Email Validation & Bulk Sending")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
@@ -10,6 +34,11 @@ def main():
     # Command: Validate Excel
     val_parser = subparsers.add_parser("validate", help="Clean an Excel list of emails")
     val_parser.add_argument("file", help="Path to your Excel (.xlsx) file")
+
+    # Command: Setup Config
+    setup_parser = subparsers.add_parser("setup", help="Quickly configure your campaign")
+    setup_parser.add_argument("--smtps", required=True, help="Path to validated SMTP list")
+    setup_parser.add_argument("--leads", required=True, help="Path to cleaned leads text file")
 
     # Command: Check SMTP
     smtp_parser = subparsers.add_parser("check-smtp", help="Validate your SMTP credentials")
@@ -26,6 +55,8 @@ def main():
 
     if args.command == "validate":
         run_pro_validation(args.file)
+    elif args.command == "setup":
+        update_config(args.smtps, args.leads)
     elif args.command == "check-smtp":
         os.system(f"python core/smtp_checker.py {args.file}")
     elif args.command == "send":
