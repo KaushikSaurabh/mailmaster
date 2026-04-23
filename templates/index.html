@@ -224,9 +224,48 @@
         </div>
     </div>
 
-    <!-- Additional sections will be built out by the app -->
+    <!-- SMTP Setup Section -->
+    <div id="smtp" class="section hidden">
+        <div class="card">
+            <h2>SMTP Configuration & Verification</h2>
+            <p>Provide your SMTP credentials in <code>host|port|user|pass</code> or <code>email:pass</code> format.</p>
+            
+            <form id="smtp-form">
+                <div class="file-input">
+                    <input type="file" id="smtp-file" accept=".txt">
+                    <p>Upload your <code>smtp_list.txt</code></p>
+                </div>
+                <button type="submit" class="btn">🛡️ Verify SMTPs</button>
+            </form>
 
-</div>
+            <div class="progress-bar" id="smtp-progress-container">
+                <div class="progress-fill" id="smtp-progress"></div>
+            </div>
+            
+            <div id="smtp-log-window" style="height: 200px; background: #000; color: #0f0; padding: 15px; font-family: monospace; overflow-y: auto; border-radius: 5px; margin-top: 20px;">
+                Waiting for SMTP list...
+            </div>
+        </div>
+    </div>
+
+    <!-- Campaign Section -->
+    <div id="campaign" class="section hidden">
+        <div class="card">
+            <h2>Launch Campaign</h2>
+            <p>Finalize your settings and start the bulk mailer.</p>
+            <div style="display: grid; gap: 15px; margin-top: 20px;">
+                <div>
+                    <label>Selected Leads:</label>
+                    <input type="text" id="selected-leads" readonly style="width:100%; padding:8px; background:var(--bg-color); border:1px solid var(--border-color); color:var(--text-color); border-radius:4px;">
+                </div>
+                <div>
+                    <label>Verified SMTPs:</label>
+                    <input type="text" id="selected-smtps" readonly style="width:100%; padding:8px; background:var(--bg-color); border:1px solid var(--border-color); color:var(--text-color); border-radius:4px;">
+                </div>
+                <button class="btn" style="background-color:var(--accent-color); margin-top:10px;" onclick="runCampaign()">🚀 Start Bulk Mailing</button>
+            </div>
+        </div>
+    </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 <script>
@@ -257,8 +296,34 @@
         });
     });
 
+    document.getElementById('smtp-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const file = document.getElementById('smtp-file').files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        document.getElementById('smtp-progress-container').style.display = 'block';
+        const log = document.getElementById('smtp-log-window');
+        log.innerHTML = "Uploading SMTP list...";
+
+        await fetch('/api/verify-smtp', {
+            method: 'POST',
+            body: formData
+        });
+    });
+
     socket.on('log_message', (data) => {
         const log = document.getElementById('log-window');
+        const div = document.createElement('div');
+        div.textContent = data.msg;
+        log.appendChild(div);
+        log.scrollTop = log.scrollHeight;
+    });
+
+    socket.on('smtp_log', (data) => {
+        const log = document.getElementById('smtp-log-window');
         const div = document.createElement('div');
         div.textContent = data.msg;
         log.appendChild(div);
@@ -268,6 +333,14 @@
     socket.on('progress', (data) => {
         document.getElementById('validate-progress').style.width = data.percent + '%';
     });
+
+    socket.on('smtp_progress', (data) => {
+        document.getElementById('smtp-progress').style.width = data.percent + '%';
+    });
+
+    function runCampaign() {
+        alert("Campaign logic is ready! Ensure your dummy.config is set up via the CLI 'setup' command first for security.");
+    }
 </script>
 
 </body>
